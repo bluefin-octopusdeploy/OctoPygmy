@@ -1,6 +1,8 @@
 # Bluefin
 ###(formerly OctoPygmy)
 
+[![Join the chat at https://gitter.im/bluefin-octopusdeploy/OctoPygmy](https://badges.gitter.im/bluefin-octopusdeploy/OctoPygmy.svg)](https://gitter.im/bluefin-octopusdeploy/OctoPygmy?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [![Build Status](https://travis-ci.org/davidroberts63/OctoPygmy.svg?branch=master)](https://travis-ci.org/davidroberts63/OctoPygmy) [![gitter.im](https://img.shields.io/gitter/room/gitterHQ/gitter.svg)](https://gitter.im/bluefin-octopusdeploy/chrome-extension)
 
 A small Chrome extension for Octopus Deploy to provide some additional functions to the user interface.
