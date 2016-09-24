@@ -54,9 +54,10 @@ describe("view-release-deployment-process", function() {
       expect(script).toBe(null);
     });
 
-    it("should should add a new script element", function() {
+    it("should add a new script element for 3.4.x", function() {
       var template = '<div>hello</div>';
       var message = { 'message': 'get-template-response', 'properties': { 'templateName' : 'show-release-deployment-plan.html', 'template': template }};
+      pygmy3_0.viewReleaseDeploymentProcess.setOctopusVersion("3.4.10");
       pygmy3_0.viewReleaseDeploymentProcess.receiveMessage(message);
 
       var script = document.getElementById('bluefin-showreleasedeploymentprocess-handler');
@@ -64,6 +65,21 @@ describe("view-release-deployment-process", function() {
       expect(script.type).toBe('text/javascript');
       expect(script.text).not.toContain("template: '#{template}'");
       expect(script.text).toContain("template: '" + template + "',");
+      expect(script.text).toContain("$uibModal");
+    });
+
+    it("should add a new script element for 3.3.x", function() {
+      var template = '<div>hello</div>';
+      var message = { 'message': 'get-template-response', 'properties': { 'templateName' : 'show-release-deployment-plan.html', 'template': template }};
+      pygmy3_0.viewReleaseDeploymentProcess.setOctopusVersion("3.3.9");
+      pygmy3_0.viewReleaseDeploymentProcess.receiveMessage(message);
+
+      var script = document.getElementById('bluefin-showreleasedeploymentprocess-handler');
+      expect(script).not.toBe(null);
+      expect(script.type).toBe('text/javascript');
+      expect(script.text).not.toContain("template: '#{template}'");
+      expect(script.text).toContain("template: '" + template + "',");
+      expect(script.text).toContain("$modal");
     });
   });
 

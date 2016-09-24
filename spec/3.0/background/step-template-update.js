@@ -1,8 +1,12 @@
 describe("step-template-update", function() {
-  var originalDebug = console.debug;
-  
+  var originalConsoleDebug;
+  var originalConsoleLog;
+
   beforeEach(function() {
-    console.debug = function() {}
+    originalConsoleDebug = console.debug;
+    originalConsoleLog = console.log;
+    console.debug = function() {};
+    console.log = function() {};
     methodCalled = "none";
     idsUpdated = [];
     idsManual = [];
@@ -10,7 +14,8 @@ describe("step-template-update", function() {
   });
 
   afterEach(function() {
-    console.debug = originalDebug;
+    console.debug = originalConsoleDebug;
+    console.log = originalConsoleLog
   })
 
   describe("when updating the actions", function() {

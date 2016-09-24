@@ -52,7 +52,7 @@ pygmy3_0.editStepAsJson = (function() {
                 backdrop: "static",
                 keyboard: !0,
                 size: 'lg',
-                template: '<div class="modal-header">\n<button class="close" type="button" data-dismiss="modal" aria-hidden="true" ng-hide="isWorking.busy" ng-click="close()">Exit</button>\n<h3>Edit Step as JSON</h3>\n</div>\n<div class="modal-body">\n<div id="editStepAsJsonContainer" >\n<div id="editStepAsJson" style="height:600px" class="big-on-full" ui-ace="{ mode: aceMode, onLoad: editorLoaded }" ng-model="view.scriptBody"></div>\n</div>\n</div>\n<div class="modal-footer">\n<spin active="isWorking.busy"></spin>\n<div>\n<button class="btn btn-success" ng-disabled="isWorking.busy" ng-click="execute()">Save</button>\n<button class="btn btn-default" ng-disabled="isWorking.busy" ng-click="cancel()">Cancel</button>\n</div>\n</div>\n',
+                template: '<div class="modal-header">\n<button class="close" type="button" data-dismiss="modal" aria-hidden="true" ng-hide="isWorking.busy" ng-click="close()">x</button>\n<h3>Edit Step as JSON</h3>\n</div>\n<div class="modal-body">\n<div id="editStepAsJsonContainer" >\n<div id="editStepAsJson" style="height:600px" class="big-on-full" ui-ace="{ mode: aceMode, onLoad: editorLoaded }" ng-model="view.scriptBody"></div>\n</div>\n</div>\n<div class="modal-footer">\n<spin active="isWorking.busy"></spin>\n<div>\n<button class="btn btn-success" ng-disabled="isWorking.busy" ng-click="execute()">Save</button>\n<button class="btn btn-default" ng-disabled="isWorking.busy" ng-click="cancel()">Cancel</button>\n</div>\n</div>\n',
                 controller: function ($scope, $modalInstance) {
                   $scope.view = {
                      scriptBody: json 
@@ -119,7 +119,7 @@ pygmy3_0.editStepAsJson = (function() {
           '<ul class="dropdown-menu" role="menu" data-step-id="{{step.Id}}" data-deployment-process-id="{{project.DeploymentProcessId}}" data-action-id="{{action.Id}}" data-is-child="{{isChild}}">');
     }
 
-    function addEditStepAsJsonRefreshHandler() {
+    function addEditStepAsJsonRefreshHandler(octopusVersion) {
         if (!document.getElementById('bluefin-editstepasjson-refreshbutton')) {
             //handles response from background page for 'get json' request, showing editor 
             console.debug(" - creating edit handler element")
@@ -138,6 +138,9 @@ pygmy3_0.editStepAsJson = (function() {
             showEditorHandlerScript.id = 'bluefin-editstepasjson-edithandler';
             showEditorHandlerScript.type = 'text/javascript';
             var functionAsText = angularShowModalDialog.toString()
+            if (commonpygmy.isNewerVersionThan(octopusVersion, "3.4.0")) {
+                functionAsText = functionAsText.replace(/\$modal/g, "$uibModal");
+            }
             showEditorHandlerScript.text = functionAsText.slice(functionAsText.indexOf("{") + 1, functionAsText.lastIndexOf("}"));
             document.body.appendChild(showEditorHandlerScript);
 
@@ -197,27 +200,27 @@ pygmy3_0.editStepAsJson = (function() {
         }
     }
 
-    function nodeMutated(node) {
+    function nodeMutated(node, octopusVersion) {
         if (node.querySelector("#processEditDropdown")) {
             console.debug("Loading Blue fin feature 'edit step as json'");
             addEditStepAsJsonMetaData();
-            addEditStepAsJsonRefreshHandler();
+            addEditStepAsJsonRefreshHandler(octopusVersion);
         }
         addEditStepAsJsonMenuItems(node);
     }
 
-    function nodesMutated(nodes) {
+    function nodesMutated(nodes, octopusVersion) {
         for (var i = 0; i < nodes.length; i++) {
             var node = nodes[i];
             if (node.nodeType != 1) return; // Not an element just ignore.
-            nodeMutated(node);
+            nodeMutated(node, octopusVersion);
         }
     }
 
-    function observe(content) {
+    function observe(content, octopusVersion) {
         var observer = new MutationObserver(function(mutations) {
             mutations.forEach(function(mutation) {
-                nodesMutated(mutation.addedNodes);
+                nodesMutated(mutation.addedNodes, octopusVersion);
             });
         });
         observer.observe(content, { childList: true, subtree: true, attributes: false, characterData: false});

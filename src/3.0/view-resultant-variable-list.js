@@ -168,7 +168,10 @@ pygmy3_0.viewResultantVariableList = (function() {
         }
     }
 
-    function observe(content) {
+    function observe(content, octopusVersion) {
+        if (commonpygmy.isNewerVersionThan(octopusVersion, "3.4.0")) {
+            return;
+        }
         var observer = new MutationObserver(function(targets, observer) { checkIfWeAreOnVariablesPage(); });
         observer.observe(content, { childList: true, subtree: true, attributes: false, characterData: false});
 

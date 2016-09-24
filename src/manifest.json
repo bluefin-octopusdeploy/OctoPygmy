@@ -4,7 +4,7 @@
   "name": "Blue fin",
   "description": "Eases the management of large installations of targets and projects in Octopus Deploy",
   "version": "1.51.15",
-  "author": "David Roberts (@davidroberts63), Matt Richardson",
+  "author": "David Roberts (@davidroberts63), Matt Richardson (@squire_matt)",
   "homepage_url": "http://bluefin.teapotcoder.com",
   "content_scripts": [
   {
@@ -48,6 +48,7 @@
       "3.0/background/clone-step-handler.js",
       "3.0/background/edit-step-as-json-handler.js",
       "3.0/background/template-loader.js",
+      "3.0/background/octopus-version-handler.js",
       "metrics.js",
       "libs/mixpanel.js",
       "libs/nanoajax.min.js"],

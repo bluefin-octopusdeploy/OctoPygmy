@@ -14,20 +14,26 @@ var pygmy3_0 = (function() {
 	}
 
 	function setup(options) {
-		console.info("Setting up OctoPygmy for Octopus Deploy 3.0");
-		
-		var content = document.getElementById(contentElementId);
-		
-		console.debug("Initializing features based upon options");
-		if(options.dashboard) this.dashboardCollapser.observe(content);
-		if(options.environments) this.environmentCollapser.observe(content);
-		if(options.machines) this.environmentFilter.observe(content);
-		if(options.libraryTemplate) this.integrateStepTemplateLibrary.observe(content);
-		if(options.updateAllTemplate) this.stepTemplateUpdater.observe(content);
-		if(options.cloneStep) this.cloneStep.observe(content);
-		if(options.editStepAsJson) this.editStepAsJson.observe(content);
-		if(options.viewReleaseDeploymentProcess) this.viewReleaseDeploymentProcess.observe(content);
-		if(options.viewResultantVariableList) this.viewResultantVariableList.observe(content);
+		var self = this;
+        chrome.runtime.sendMessage({ message: 'get-octopus-version'}, function(response) {
+        	if (response && response.message == 'get-octopus-version-response') {
+				console.info("Setting up OctoPygmy for Octopus Deploy 3.0 (" + response.version + ")");
+
+				var content = document.getElementById(contentElementId);
+
+				console.debug("Initializing features based upon options");
+				if(options.dashboard) self.dashboardCollapser.observe(content);
+				if(options.environments) self.environmentCollapser.observe(content);
+				if(options.machines) self.environmentFilter.observe(content);
+				if(options.libraryTemplate) self.integrateStepTemplateLibrary.observe(content);
+				if(options.updateAllTemplate) self.stepTemplateUpdater.observe(content);
+				if(options.cloneStep) self.cloneStep.observe(content);
+				if(options.editStepAsJson) self.editStepAsJson.observe(content, response.version);
+				if(options.viewReleaseDeploymentProcess) self.viewReleaseDeploymentProcess.observe(content, response.version);
+				if(options.viewResultantVariableList) self.viewResultantVariableList.observe(content, response.version);
+        	}
+        });
+
 	}
 
 	return {

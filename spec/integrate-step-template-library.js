@@ -1,11 +1,22 @@
 describe('integrate-step-template-library', function() {
 	var libraryNode = {};
+    var originalConsoleDebug;
+    var originalConsoleLog;
 
 	beforeEach(function() {
+	    originalConsoleDebug = console.debug;
+	    originalConsoleLog = console.log;
+	    console.debug = function() {};
+	    console.log = function() {};
 		integrateStepTemplateLibrary.theDocument = document.createElement('div');
 		integrateStepTemplateLibrary.theDocument.innerHTML = '<div id="library-templates"></div>';
 		libraryNode = integrateStepTemplateLibrary.theDocument.childNodes[0];
 	})
+
+    afterEach(function() {
+        console.debug = originalConsoleDebug;
+        console.log = originalConsoleLog
+    });
 
 	describe('addTemplatesToListing', function() {
 		var items = [

@@ -1,4 +1,5 @@
 pygmy3_0.viewReleaseDeploymentProcess = (function() {
+	var octopusVersion;
 
 	function receiveMessage(response) {
         if (response.message == 'get-template-response' && response.properties.templateName == 'show-release-deployment-plan.html') {
@@ -8,7 +9,10 @@ pygmy3_0.viewReleaseDeploymentProcess = (function() {
 	        showDeploymentProcessHandlerScript.id = 'bluefin-showreleasedeploymentprocess-handler';
 	        showDeploymentProcessHandlerScript.type = 'text/javascript';
 	        var functionAsText = angularShowModalDialog.toString()
-	        functionAsText = functionAsText.replace("#{template}", response.properties.template);
+            if (commonpygmy.isNewerVersionThan(pygmy3_0.viewReleaseDeploymentProcess.octopusVersion, "3.4.0")) {
+                functionAsText = functionAsText.replace(/\$modal/g, "$uibModal");
+            }
+            functionAsText = functionAsText.replace("#{template}", response.properties.template);
 	        showDeploymentProcessHandlerScript.text = functionAsText.slice(functionAsText.indexOf("{") + 1, functionAsText.lastIndexOf("}"));
 	        document.body.appendChild(showDeploymentProcessHandlerScript);
         }
@@ -135,7 +139,6 @@ pygmy3_0.viewReleaseDeploymentProcess = (function() {
         var span = document.createElement('span');
         span.id = 'bluefin-showreleasedeploymentprocess-analytics-handler';
         span.onclick = span.onClick = function () {
-        	debugger;
             chrome.runtime.sendMessage({ name: 'view-deployment-release-process', properties: {} }); // Analytics
         }
         variablesNote.parentNode.appendChild(span);
@@ -164,7 +167,12 @@ pygmy3_0.viewReleaseDeploymentProcess = (function() {
     	}
     }
 
-    function observe(content) {
+    function setOctopusVersion(octopusVersion) {
+    	this.octopusVersion = octopusVersion;
+    }
+
+    function observe(content, octopusVersion) {
+    	setOctopusVersion(octopusVersion);
 		var observer = new MutationObserver(function(targets, observer) { checkIfWeAreOnReleasePage(); });
         observer.observe(content, { childList: true, subtree: true, attributes: false, characterData: false});
 
@@ -175,6 +183,7 @@ pygmy3_0.viewReleaseDeploymentProcess = (function() {
         observe: observe,
         receiveMessage: receiveMessage,
         checkIfWeAreOnReleasePage: checkIfWeAreOnReleasePage,
-        addDeploymentProcessLink: addDeploymentProcessLink
+        addDeploymentProcessLink: addDeploymentProcessLink,
+        setOctopusVersion: setOctopusVersion
     };
 })();

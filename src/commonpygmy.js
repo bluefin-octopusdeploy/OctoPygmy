@@ -49,5 +49,38 @@ var commonpygmy = {
 	setNodePygmyId: function(node, pygmyId)
 	{
 		node.setAttribute(commonpygmy.pygmyIdAttributeName, "z" + pygmyId);
+	},
+
+	//returns true if a is newer than b
+	isNewerVersionThan: function(a, b)
+	{
+		var a_components = a.split(".");
+    	var b_components = b.split(".");
+
+    	var majorA = parseInt(a_components[0]);
+    	var majorB = parseInt(b_components[0]);
+
+    	if (majorA > majorB)
+    		return true;
+    	if (majorA < majorB)
+    		return false;
+
+    	var minorA = parseInt(a_components[1]);
+    	var minorB = parseInt(b_components[1]);
+
+    	if (minorA > minorB)
+    		return true;
+    	if (minorA < minorB)
+    		return false;
+
+    	var revisionA = parseInt(a_components[2]);
+    	var revisionB = parseInt(b_components[2]);
+
+    	if (revisionA > revisionB)
+    		return true;
+    	if (revisionA < revisionB)
+    		return false;
+
+    	return false;
 	}
 }

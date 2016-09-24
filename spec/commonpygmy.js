@@ -1,5 +1,20 @@
 describe("commonpygmy", function() {
-	describe("addFilterInput", function() {
+    var originalConsoleDebug;
+    var originalConsoleLog;
+
+    beforeEach(function () {
+        originalConsoleDebug = console.debug;
+        originalConsoleLog = console.log;
+        console.debug = function() {};
+        console.log = function() {};
+    });
+
+    afterEach(function() {
+        console.debug = originalConsoleDebug;
+        console.log = originalConsoleLog
+    });
+
+  	describe("addFilterInput", function() {
 		it("adds the input to the node", function() {
 			var input = { id: 'the-id' };
 			var parent = { appendChild: function() {} };
@@ -25,11 +40,11 @@ describe("commonpygmy", function() {
 		var idsToShow = '';
 		// When setting the style.display. Be sure to use valid values.
 		// It runs against the XHTML parser.
-		var nodeHtml = '<div id="z" octopygmy-id="a">&nbsp;</div>' +
-						'<div id="x" octopygmy-id="b">&nbsp;</div>' +
-						'<div id="y" octopygmy-id="c">&nbsp;</div>' +
-						'<div id="w" octopygmy-id="d">&nbsp;</div>' +
-						'<div octopygmy-id="d">&nbsp;</div>';
+		var nodeHtml = '<div id="z" octopygmy-id="za">&nbsp;</div>' +
+						'<div id="x" octopygmy-id="zb">&nbsp;</div>' +
+						'<div id="y" octopygmy-id="zc">&nbsp;</div>' +
+						'<div id="w" octopygmy-id="zd">&nbsp;</div>' +
+						'<div octopygmy-id="zd">&nbsp;</div>';
 		var nodeSegment = '';
 
 		beforeEach(function() {
@@ -71,6 +86,36 @@ describe("commonpygmy", function() {
 			for (var index = 0; index < nodeSegment.childNodes.length; index++) {
 				expect(nodeSegment.childNodes[index].style.display).toEqual('block');
 			}
+		});
+	});
+
+	describe("isNewerVersionThan", function() {
+		it("should return false when versions are the same", function() {
+			expect(commonpygmy.isNewerVersionThan("3.4.0", "3.4.0")).toBe(false);
+		});
+
+		it("should return false when major is lower", function() {
+			expect(commonpygmy.isNewerVersionThan("2.4.0", "3.4.0")).toBe(false);
+		});
+
+		it("should return false when minor is lower", function() {
+			expect(commonpygmy.isNewerVersionThan("3.3.0", "3.4.0")).toBe(false);
+		});
+
+		it("should return false when revision is lower", function() {
+			expect(commonpygmy.isNewerVersionThan("3.4.9", "3.4.10")).toBe(false);
+		});
+
+		it("should return true when major is higher", function() {
+			expect(commonpygmy.isNewerVersionThan("4.0.0", "3.4.0")).toBe(true);
+		});
+
+		it("should return true when minor is higher", function() {
+			expect(commonpygmy.isNewerVersionThan("3.4.0", "3.3.0")).toBe(true);
+		});
+
+		it("should return true when revision is higher", function() {
+			expect(commonpygmy.isNewerVersionThan("3.4.9", "3.4.0")).toBe(true);
 		});
 	});
 });

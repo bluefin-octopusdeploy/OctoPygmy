@@ -200,8 +200,27 @@ describe("edit-step-as-json", function() {
   });
 
   describe("addEditStepAsJsonRefreshHandler", function() {
+    function removeElement(id) {
+      span = document.getElementById(id);
+      if (span) {
+        if (span.remove)
+          span.remove();
+        else
+          span.parentNode.removeChild(span);
+      }
+    }
+
+    beforeEach(function() {
+      removeElement('bluefin-editstepasjson-showeditorhandler');
+      removeElement('bluefin-editstepasjson-edithandler');
+      removeElement('bluefin-editstepasjson-refreshbutton');
+      removeElement('bluefin-editstepasjson-refreshhandler');
+      removeElement('bluefin-editstepasjson-submitbutton');
+    });
+
   	it("adds an edit handler element", function() {
-      pygmy3_0.editStepAsJson.addEditStepAsJsonRefreshHandler();
+      var octopusVersion = "3.4.10";
+      pygmy3_0.editStepAsJson.addEditStepAsJsonRefreshHandler(octopusVersion);
       var handler = document.querySelector('#bluefin-editstepasjson-showeditorhandler')
       expect(handler).not.toBe(null);
       expect(handler.attributes.getNamedItem('data-json')).not.toBe(null);
@@ -210,16 +229,29 @@ describe("edit-step-as-json", function() {
       expect(handler.attributes.getNamedItem('data-deployment-process-id').value).toEqual("");
   	});
 
-  	it("adds an edit handler script", function() {
-      pygmy3_0.editStepAsJson.addEditStepAsJsonRefreshHandler();
+  	it("adds an edit handler script for 3.4.x", function() {
+      var octopusVersion = "3.4.10";
+      pygmy3_0.editStepAsJson.addEditStepAsJsonRefreshHandler(octopusVersion);
       var script = document.querySelector('#bluefin-editstepasjson-edithandler');
       expect(script).not.toBe(null);
       expect(script.type).toEqual("text/javascript");
       expect(script.text).toContain("bluefin-editstepasjson-showeditorhandler"); //hard to test actual content
+      expect(script.text).toContain("$uibModal");
   	});
 
+    it("adds an edit handler script for 3.3.x", function() {
+      var octopusVersion = "3.3.18";
+      pygmy3_0.editStepAsJson.addEditStepAsJsonRefreshHandler(octopusVersion);
+      var script = document.querySelector('#bluefin-editstepasjson-edithandler');
+      expect(script).not.toBe(null);
+      expect(script.type).toEqual("text/javascript");
+      expect(script.text).toContain("bluefin-editstepasjson-showeditorhandler"); //hard to test actual content
+      expect(script.text).toContain("$modal");
+    });
+
   	it("adds an refresh handler element", function() {
-      pygmy3_0.editStepAsJson.addEditStepAsJsonRefreshHandler();
+      var octopusVersion = "3.4.10";
+      pygmy3_0.editStepAsJson.addEditStepAsJsonRefreshHandler(octopusVersion);
       var handler = document.querySelector('#bluefin-editstepasjson-refreshbutton')
       expect(handler).not.toBe(null);
       expect(handler.attributes.getNamedItem('status')).not.toBe(null);
@@ -229,7 +261,8 @@ describe("edit-step-as-json", function() {
   	});
 
   	it("adds an refresh handler script", function() {
-      pygmy3_0.editStepAsJson.addEditStepAsJsonRefreshHandler();
+      var octopusVersion = "3.4.10";
+      pygmy3_0.editStepAsJson.addEditStepAsJsonRefreshHandler(octopusVersion);
       var script = document.querySelector('#bluefin-editstepasjson-refreshhandler');
       expect(script).not.toBe(null);
       expect(script.type).toEqual("text/javascript");
@@ -237,7 +270,8 @@ describe("edit-step-as-json", function() {
   	});
 
   	it("adds an submit handler element", function() {
-      pygmy3_0.editStepAsJson.addEditStepAsJsonRefreshHandler();
+      var octopusVersion = "3.4.10";
+      pygmy3_0.editStepAsJson.addEditStepAsJsonRefreshHandler(octopusVersion);
       var handler = document.querySelector('#bluefin-editstepasjson-submitbutton')
       expect(handler).not.toBe(null);
       expect(handler.attributes.getNamedItem('data-json')).not.toBe(null);
@@ -247,8 +281,9 @@ describe("edit-step-as-json", function() {
   	});
 
     it("doesn't add the handlers twice", function() {
-      pygmy3_0.editStepAsJson.addEditStepAsJsonRefreshHandler();
-      pygmy3_0.editStepAsJson.addEditStepAsJsonRefreshHandler();
+      var octopusVersion = "3.4.10";
+      pygmy3_0.editStepAsJson.addEditStepAsJsonRefreshHandler(octopusVersion);
+      pygmy3_0.editStepAsJson.addEditStepAsJsonRefreshHandler(octopusVersion);
       expect(document.querySelectorAll('#bluefin-editstepasjson-showeditorhandler').length).toEqual(1);
       expect(document.querySelectorAll('#bluefin-editstepasjson-edithandler').length).toEqual(1);
       expect(document.querySelectorAll('#bluefin-editstepasjson-refreshbutton').length).toEqual(1);
