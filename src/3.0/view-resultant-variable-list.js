@@ -26,17 +26,17 @@ pygmy3_0.viewResultantVariableList = (function() {
                 keyboard: !0,
                 size: 'lg',
                 template: '#{template}',
-                controller: function ($scope, $routeParams, busy, pageTitle, octopusRepository, $route, pluginRegistry, octoDialog, $modal, $location, unsavedChanges, $modalInstance) {
+                controller: function ($scope, $routeParams, busy, octopusRepository, $route, $modal, unsavedChanges, $modalInstance) {
                     var isLoading = $scope.isLoading = busy.create();
                     var isSaving = $scope.isSaving = busy.create();
-                    var formatted = {};
+                    var formattedScope = {};
                     $scope.close = function () { $modalInstance.close(); };
 
                     var formatScope = function(variableId, varscope, scopeValues) {
                         if (!varscope || !scopeValues)
                             return "";
-                        if (formatted[variableId])
-                            return formatted[variableId];
+                        if (formattedScope[variableId])
+                            return formattedScope[variableId];
                         var values = [];
                         _.each(_.sortBy(_.pairs(varscope), function(pr) {
                             return pr[0]
@@ -47,11 +47,42 @@ pygmy3_0.viewResultantVariableList = (function() {
                                 item && values.push({ type: pr[0], name: item.Name } )
                             })
                         });
-                        return formatted[variableId] = values,
+                        return formattedScope[variableId] = values,
                         values
                     };
                     var projectId = $routeParams.id;
+                    $scope.filterVisible = false;
+                    $scope.toggleFilter = function() { $scope.filterVisible = !$scope.filterVisible; };
+                    $scope.search = {
+                        environmentId: "",
+                        machineId: "",
+                        actionId: "",
+                        roleIds: [],
+                        channelId: ""
+                    };
 
+                    var doesScopeMatch = function(variableScope, searchId, scopeValues) {
+                        if (variableScope == undefined || searchId == "" || searchId == null){
+                            return true;
+                        }
+                        var match = _.findWhere(scopeValues, {Id: searchId});
+                        var result = _.indexOf(variableScope, match.Id) > -1;
+                        return result;
+                    };
+
+                    $scope.filterScope = function(value, index, array) {
+                        var environmentMatches = doesScopeMatch(value.Scope.Environment, $scope.search.environmentId, $scope.scopeValues.Environments);
+                        var machineMatches = doesScopeMatch(value.Scope.Machine, $scope.search.machineId, $scope.scopeValues.Machines);
+                        var stepMatches = doesScopeMatch(value.Scope.Action, $scope.search.actionId, $scope.scopeValues.Actions);
+                        var channelMatches = doesScopeMatch(value.Scope.Channel, $scope.search.channelId, $scope.scopeValues.Channels);
+                        var roleMatches = ($scope.search.roleIds.length == 0);
+                        _.each($scope.search.roleIds, function(roleId) {
+                            roleMatches = roleMatches || doesScopeMatch(value.Scope.Role, roleId, $scope.scopeValues.Roles);
+                        })
+                        return environmentMatches && machineMatches && stepMatches && roleMatches && channelMatches;
+                    };
+
+                    $scope.scopeValues = [];
                     $scope.variableSetsLoading = {};
                     $scope.variables = [];
                     $scope.projectHasUnsavedChanges = unsavedChanges.hasUnsavedChanges();
@@ -64,6 +95,7 @@ pygmy3_0.viewResultantVariableList = (function() {
                                 variable.Source = 'Project';
                                 variable.formattedScope = formatScope(variable.Id, variable.Scope, variableSet.ScopeValues);
                             });
+                            $scope.scopeValues = variableSet.ScopeValues;
                             $scope.variables = $scope.variables.concat(variableSet.Variables);
                         })
 

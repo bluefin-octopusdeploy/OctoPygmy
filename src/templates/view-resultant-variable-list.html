@@ -8,6 +8,60 @@
     </div>
     <loading-wrapper busy="isLoading">
     <div class="variables-snapshot" ng-show="variableSetsWaitingToLoad == 0">
+        <div>
+            <div class='pull-right form-group'>
+                <a ng-show='filterVisible' ng-click="toggleFilter()" style='cursor:pointer'>« hide filter</a>
+                <a ng-show='!filterVisible' ng-click="toggleFilter()" style='cursor:pointer'>show filter »</a>
+            </div>
+            <div ng-show="filterVisible" style='clear:both'>
+                <div class='form-group' >
+                  <label class='control-label col-sm-4' for='search.environmentId'>Environment</label>
+                  <div class='col-sm-8'>
+                    <octo-select placeholder="Any environment"
+                                 available="scopeValues.Environments"
+                                 ng-model="search.environmentId"
+                                 id="search.environmentId" />
+                  </div>
+                </div>
+                <div class='form-group'>
+                  <label class='control-label col-sm-4' for='search.roleIds'>Roles</label>
+                  <div class='col-sm-8'>
+                    <octo-select multiple='multiple'
+                                 placeholder="Any role"
+                                 available="scopeValues.Roles"
+                                 ng-model="search.roleIds"
+                                 id="search.roleIds" />
+                  </div>
+                </div>
+                <div class='form-group'>
+                  <label class='control-label col-sm-4' for='search.machineId'>Target</label>
+                  <div class='col-sm-8'>
+                    <octo-select placeholder="Any target"
+                                 available="scopeValues.Machines"
+                                 ng-model="search.machineId"
+                                 id="search.machineId" />
+                  </div>
+                </div>
+                <div class='form-group'>
+                  <label class='control-label col-sm-4' for='search.actionId'>Step</label>
+                  <div class='col-sm-8'>
+                    <octo-select placeholder="Any step"
+                                 available="scopeValues.Actions"
+                                 ng-model="search.actionId"
+                                 id="search.actionId" />
+                  </div>
+                </div>
+                <div class='form-group'>
+                  <label class='control-label col-sm-4' for='search.channelId'>Step</label>
+                  <div class='col-sm-8'>
+                    <octo-select placeholder="Any channel"
+                                 available="scopeValues.Channels"
+                                 ng-model="search.channelId"
+                                 id="search.channelId" />
+                  </div>
+                </div>
+            </div>
+        </div>
         <table class="table table-bordered fixed-table-width">
             <thead>
                 <tr>
@@ -18,7 +72,7 @@
                 </tr>
             </thead>
             <tbody class="smaller-fonts">
-                <tr ng-repeat="variable in variables | orderBy:'Name' ">
+                <tr ng-repeat="variable in variables | filter:filterScope | orderBy:'Name' ">
                     <td class="force-word-wrap">
                         {{ variable.Name }}
                     </td>
