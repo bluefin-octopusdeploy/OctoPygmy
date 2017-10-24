@@ -1,7 +1,7 @@
 {
   "name": "Bluefin",
   "version": "1.0.0",
-  "license": "Apache-2.0",
+  "license": "Apache 2.0",
   "description": "Extension for Octopus Deploy",
   "main": "index.js",
   "scripts": {
@@ -19,6 +19,9 @@
     "jasmine-node": "1.14.5",
     "phantomjs-prebuilt": "^2.1.14",
     "saucelabs": "^1.2.0",
-    "selenium-webdriver": "2.47.0"
+    "selenium-webdriver": "2.47.0",
+    "jasmine-node": "1.14.5",
+    "eslint": "^4.7.2",
+    "eslint-config-google": "^0.9.1"
   }
 }
