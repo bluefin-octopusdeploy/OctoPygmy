@@ -25,13 +25,13 @@ pygmy3_0.editStepAsJsonHandler = (function() {
 		sendResponse(response);
 	}
 
-	function handleEditedStepGetResponse(response, sendResponse, stepId, deploymentProcessId, json, url, putJsonRequest) {
+	function handleEditedStepGetResponse(response, sendResponse, stepId, deploymentProcessId, json, url, putJsonRequest, installationId, antiForgeryToken) {
 		var step = response.Steps.filter(function(step) { return step.Id == stepId })[0];
 		var index = response.Steps.indexOf(step);
 
 		response.Steps[index] = JSON.parse(json);
 
-		putJsonRequest(url, response, function (status, response) { handlePutResponse(status, response, sendResponse, stepId, deploymentProcessId); })
+		putJsonRequest(url, response, installationId, antiForgeryToken, function (status, response) { handlePutResponse(status, response, sendResponse, stepId, deploymentProcessId); })
 	}
 
 	function getJsonResponse(url, handler) {
@@ -43,8 +43,11 @@ pygmy3_0.editStepAsJsonHandler = (function() {
 		});
 	}
 
-	function putJsonRequest(url, body, handlePutResponse) {
-		nanoajax.ajax({url: url, method: "PUT", body: JSON.stringify(body)}, handlePutResponse);
+	function putJsonRequest(url, body, installationId, antiForgeryToken, handlePutResponse) {
+		if (installationId && antiForgeryToken) {
+			document.cookie = "Octopus-Csrf-Token_" + installationId + "=" + antiForgeryToken;
+		}
+		nanoajax.ajax({url: url, method: "PUT", body: JSON.stringify(body), headers: {'X-Octopus-Csrf-Token': antiForgeryToken}}, handlePutResponse);
 	}
 
 	function handleEditStepAsJsonRequest(request, sendResponse, octopusRoot, getJsonResponse, handleEditStepGetResponse) {
@@ -61,6 +64,8 @@ pygmy3_0.editStepAsJsonHandler = (function() {
 	function handleEditedStepAsJsonRequest(request, sendResponse, octopusRoot, getJsonResponse, handleEditedStepGetResponse, putJsonRequest) {
 		var json = request.properties.json;
 		var deploymentProcessId = request.properties.deploymentProcessId;
+		var antiForgeryToken = request.properties.antiForgeryToken;
+		var installationId = request.properties.installationId;
 
 		try{
 			var step = JSON.parse(json);
@@ -77,7 +82,7 @@ pygmy3_0.editStepAsJsonHandler = (function() {
 
 		var url = octopusRoot + "/api/deploymentprocesses/" + deploymentProcessId;
 
-		var handler = function (response) { handleEditedStepGetResponse(response, sendResponse, stepId, deploymentProcessId, json, url, putJsonRequest); };
+		var handler = function (response) { handleEditedStepGetResponse(response, sendResponse, stepId, deploymentProcessId, json, url, putJsonRequest, installationId, antiForgeryToken); };
 		getJsonResponse(url, handler);
 	}
 

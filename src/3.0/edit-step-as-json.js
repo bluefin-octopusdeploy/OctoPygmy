@@ -64,6 +64,11 @@ pygmy3_0.editStepAsJson = (function() {
                     var submitHandler = document.getElementById('bluefin-editstepasjson-submitbutton');
                     submitHandler.attributes['data-json'].value = updatedJson;
                     submitHandler.attributes['data-deployment-process-id'].value = deploymentProcessId;
+                    var token = Octopus.Client.Util.getAntiforgeryToken ? Octopus.Client.Util.getAntiforgeryToken() : "";
+                    submitHandler.attributes['data-anti-forgery-token'].value = token;
+                    var installationId = Octopus.App.Client.rootDocument().InstallationId;
+                    submitHandler.attributes['data-installation-id'].value = installationId;
+
                     if (submitHandler.onClick)
                         submitHandler.onClick();
                     else
@@ -173,12 +178,20 @@ pygmy3_0.editStepAsJson = (function() {
             attribute = document.createAttribute("data-json");
             attribute.value = "";
             submitHandler.setAttributeNode(attribute);
+            attribute = document.createAttribute("data-anti-forgery-token");
+            attribute.value = "";
+            submitHandler.setAttributeNode(attribute);
+            attribute = document.createAttribute("data-installation-id");
+            attribute.value = "";
+            submitHandler.setAttributeNode(attribute);
             submitHandler.onClick = submitHandler.onclick = function() { 
                         chrome.runtime.sendMessage({ 
                             message: 'edited-step-as-json', 
                             properties: {
                                 json: submitHandler.attributes['data-json'].value, 
-                                deploymentProcessId: submitHandler.attributes['data-deployment-process-id'].value 
+                                deploymentProcessId: submitHandler.attributes['data-deployment-process-id'].value,
+                                antiForgeryToken: submitHandler.attributes['data-anti-forgery-token'].value,
+                                installationId: submitHandler.attributes['data-installation-id'].value,
                             }
                     }, receiveEditedMessage)}
             document.body.appendChild(submitHandler);
