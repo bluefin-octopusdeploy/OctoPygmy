@@ -33,6 +33,7 @@ deploy:
         <li>Click <strong>Load Unpacked Extension....</strong> If you dont see that then click the check box for <strong>Developer Mode</strong> in the upper right of that same page.</li>
         <li>Choose the folder you extracted the zip file. Be sure to select the <strong>src</strong> folder or whatever you may have renamed it to.</li>
     </ol>"
+  skip_cleanup: true
   on:
     repo: bluefin-octopusdeploy/chrome-extension
     tags: true
